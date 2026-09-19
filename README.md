@@ -74,7 +74,7 @@ This course takes you through building 7 real-world AI agent projects, from simp
    **For branch-based projects:**
    ```bash
    # Start with Hello World
-   git checkout project/hello-world
+   git switch -c project/hello-world
    uv sync
    uv run python main.py
    

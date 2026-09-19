@@ -1,0 +1,15 @@
+[project]
+name = "langchain-course"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "MrMahi-07", email = "mrmahi353@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "langchain>=1.4.2",
+    "langchain-core>=1.6.3",
+    "langchain-google-genai>=4.4.0",
+    "python-dotenv>=1.2.3",
+]
