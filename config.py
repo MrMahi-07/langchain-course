@@ -14,6 +14,5 @@ def get_env(name: str, default=None) -> str:
 
 
 GOOGLE_PROJECT_NAME = get_env("GOOGLE_PROJECT_NAME")
-GOOGLE_API_KEY = get_env("GOOGLE_API_KEY")
-PROJECT_ROOT_PATH = Path(get_env("PROJECT_ROOT"))
+PROJECT_ROOT_PATH = Path(get_env("PROJECT_ROOT", str(Path(__file__).resolve().parent)))
 DATA_ROOT_PATH = PROJECT_ROOT_PATH / "data"

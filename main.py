@@ -23,6 +23,11 @@ def web_search(query: str) -> str:
 
 
 def main():
+    prompt = input("You: ").strip()
+    if not prompt:
+        print("Please enter a prompt.")
+        return
+
     llm = ChatGoogleGenerativeAI(
         project=GOOGLE_PROJECT_NAME,
         model="gemini-2.5-flash",
@@ -33,11 +38,11 @@ def main():
 
     agent = create_agent(model=llm, tools=tools)
 
-    messages = {"messages": HumanMessage("What is the weather in Tokyo?")}
+    messages = {"messages": [HumanMessage(content=prompt)]}
 
     response = agent.invoke(messages)
 
-    print(response)
+    print(f"Gemini: {response['messages'][-1].content}")
 
 
 if __name__ == "__main__":

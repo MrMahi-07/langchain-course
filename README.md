@@ -1,150 +1,100 @@
-# LangChain- Develop AI Agents with LangChain & LangGraph 🦜🔗
+# Gemini Tool-Calling Agent
 
-**Learn LangChain and LangGraph by building real world AI Agents (Python, Latest Version V.1.0+)**
+A small LangChain agent that sends a prompt to Gemini 2.5 Flash through Google Cloud Vertex AI. The agent can decide to call a registered LangChain tool before returning its answer.
 
-This course is designed to teach you how to QUICKLY harness the power of the LangChain library for LLM applications. Build 3 end-to-end working LangChain based generative AI applications with no fluff, no toy examples - just real projects using real APIs and real-world skills.
+## How It Works
 
-![LangChain Logo](/static/LangChain_OSS%20Lockup_light.png)
-![LangGraph Logo](/static/LangGraph_OSS%20Lockup_light.png)
+```text
+Prompt in terminal -> LangChain agent -> Gemini 2.5 Flash on Vertex AI
+                           |                   |
+                           +-- registered tools <-+ (when Gemini requests a tool)
+```
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/EdenMarco177?style=social)](https://twitter.com/EdenMarco177)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+The app uses `ChatGoogleGenerativeAI` with `vertexai=True`, then passes that model and the registered tools to LangChain's `create_agent`. User input is sent as a `HumanMessage`; `agent.invoke` runs the model/tool loop and the app prints the final response.
 
-[![udemy](https://img.shields.io/badge/LangChain%20Udemy%20Course%20Coupon%20%2412.99-brightgreen)](https://www.udemy.com/course/langchain/?couponCode=JULY-2026)
+The `web_search` tool is currently a stub: it prints the query and always returns the sample text `Tokyo weather is sunny`. It does not access the internet. The file `data/about-elon.txt` is present as sample data, but this version of the app does not load it or implement file search/RAG.
 
+## Requirements
 
+- Python 3.14 or newer
+- [uv](https://docs.astral.sh/uv/)
+- A Google Cloud project with billing enabled and the Vertex AI API enabled
+- Google Cloud CLI (`gcloud`) for local Application Default Credentials
 
-## 💡 What You'll Build 
+## Local Setup
 
-This course takes you through building 7 real-world AI agent projects, from simple hello-world applications to advanced agentic systems:
+1. Clone the repository and enter its directory:
 
-| Project | Type | Description |
-|---------|------|-------------|
-| 👋 [LangChain Hello World](https://github.com/emarco177/langchain-course/tree/project/hello-world) | Branch (`project/hello-world`) | Your first AI agent - basic structure and LLM integration |
-| 🔎  [Modern Search Agent](https://github.com/emarco177/ice_breaker/tree/project/search-agent) | Branch (`project/search-agent`) | Build search agents using LangChain v.1's `create_agent` interface with custom tools, Tavily integration, and structured outputs |
-| 🧠 [Agents Under The Hood](https://github.com/emarco177/langchain-course/tree/project/agents-under-the-hood) | Branch (`project/agents-under-the-hood`) | Understanding reasoning and acting patterns in AI agents |
-| 📄 [RAG Gist](https://github.com/emarco177/langchain-course/tree/project/rag-gist) | Branch (`project/rag-gist`) | The gist of retrieval-augmented generation |
-| 📚 [Documentation Helper](https://github.com/emarco177/documentation-helper) | External Repo | Intelligent documentation assistant |
-| 💻 [Code Interpreter](https://github.com/emarco177/langchain-course/tree/project/code-interpreter) | Branch (`project/code-interpreter`) | AI-powered code execution and analysis |
-| 🪞 [Reflection Agent](https://github.com/emarco177/langgraph-course/tree/project/reflection-agent) | External Repo | Self-improving agent with reflection and critique capabilities |
-| 🔄 [Reflexion Agent](https://github.com/emarco177/langgraph-course/tree/project/reflexion-agent) | External Repo | Advanced self-correcting agent using reflexion techniques |
-| 🤖 [Agentic RAG](https://github.com/emarco177/langgraph-course/tree/project/agentic-rag) | External Repo | Advanced retrieval-augmented generation system |
-
-## 📚 Course Highlights 
-
-- **7 Complete Projects** - From beginner to advanced implementations including Ice Breaker, Documentation Helper, and Code Interpreter
-- **Real-World Applications** - Build agents that solve actual problems with live APIs
-- **Modern Tech Stack** - LangChain v0.3+, LangGraph, Pinecone, FAISS, Streamlit
-- **Practical Skills** - Learn RAG, vector databases, prompt engineering, and agent workflows
-- **Interactive Learning** - Follow commits chronologically for step-by-step learning
-
-## 🤔 Learning Path 
-
-### Phase 1: Foundations
-1. **Hello World Chain** - Basic agent structure and LLM integration
-2. **Code Interpreter** - Tool calling and code execution capabilities
-
-### Phase 2: Real-World Applications
-3. **Ice Breaker** - Data collection and social media integration
-4. **Documentation Helper** - RAG implementation and knowledge management
-
-### Phase 3: Advanced Concepts
-5. **Blog Analyzer** - Multi-step reasoning and content analysis
-6. **Agentic RAG** - Self-correcting agents with memory and planning
-
-## ▶️ Getting Started 
-
-### 🛠️ Prerequisites 
-- **This is not a beginner course** - Basic software engineering concepts needed
-- Familiarity with: git, Python, environment variables, classes, testing and debugging
-- Python 3.10+
-- Any Python package manager (uv, poetry, pipenv) - but NOT conda!
-- Access to an LLM (can be open source via Ollama, or cloud providers like OpenAI, Anthropic, Gemini)
-- No Machine Learning experience needed
-
-### ⚙️ Setup Instructions 
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/emarco177/langchain-course
+   ```powershell
+   git clone <repository-url>
    cd langchain-course
    ```
-2. **Choose your learning path**
-   
-   **For branch-based projects:**
-   ```bash
-   # Start with Hello World
-   git switch -c project/hello-world
-   uv sync
-   uv run python main.py
-   
-   # Progress to Code Interpreter
-   git checkout project/code-interpreter
-   uv sync
-   uv run python main.py
-   ```
-   
-   **For external repository projects:**
-   ```bash
-   # Clone specific project repositories
-   git clone https://github.com/emarco177/ice_breaker
-   cd ice_breaker
-   # Follow project-specific setup instructions
+
+2. Create your local environment file:
+
+   ```powershell
+   Copy-Item .env.example .env
    ```
 
-3. **Follow the commits**
-   - Each commit represents a lesson or feature implementation
-   - Use `git log --oneline` to see the learning progression
-   - Checkout previous commits to understand the development process
+   On macOS or Linux, use:
 
-**External Projects:**
-- [Ice Breaker](https://github.com/emarco177/ice_breaker) - Social media profile analyzer
-- [Medium Analyzer](https://github.com/emarco177/blog-analyzer) - Content analysis and insights generator
-- [Documentation Helper](https://github.com/emarco177/documentation-helper) - AI documentation assistant
-- [Reflection Agent](https://github.com/emarco177/langgraph-course/tree/project/reflection-agent) - Self-improving agent with reflection and critique capabilities
-- [Reflexion Agent](https://github.com/emarco177/langgraph-course/tree/project/reflexion-agent) - Advanced self-correcting agent using reflexion techniques
-- [Agentic RAG](https://github.com/emarco177/langgraph-course/tree/project/agentic-rag) - Advanced retrieval-augmented generation system
+   ```bash
+   cp .env.example .env
+   ```
 
+   Set `GOOGLE_PROJECT_NAME` in `.env` to your Google Cloud project ID. `PROJECT_ROOT` is optional; by default, the repository directory is used.
 
-## 📚 Learning Objectives 
+3. Install the project dependencies:
 
-By the end of this course, you'll be able to:
+   ```powershell
+   uv sync
+   ```
 
-- Build AI agents from scratch using modern frameworks
-- Implement tool calling and external API integrations
-- Create RAG systems with vector databases
-- Design multi-step reasoning workflows
-- Deploy agents to production environments
-- Handle error correction and self-improvement in agents
-- Optimize agent performance and cost efficiency
+4. Configure Google Cloud access. In a terminal where `gcloud` is installed, sign in and select the project:
 
+   ```powershell
+   gcloud auth application-default login
+   gcloud config set project YOUR_GOOGLE_CLOUD_PROJECT_ID
+   gcloud services enable aiplatform.googleapis.com --project=YOUR_GOOGLE_CLOUD_PROJECT_ID
+   ```
 
+   Ensure billing is enabled for the project and your account has permission to use Vertex AI (for example, the Vertex AI User role). The Google Cloud project ID in `.env` must be the project you have configured access to.
 
+5. Start the agent:
 
+   ```powershell
+   uv run python main.py
+   ```
 
-## 🙏 Acknowledgements 
+   Enter a prompt when asked. Each run sends a request to Gemini through Vertex AI and may incur charges under your Google Cloud billing account. Press Enter on a blank prompt to exit that run without sending a request.
 
-Big thanks to the **LangChain / LangGraph** team and their excellent [documentation and tutorials](https://langchain-ai.github.io/langgraph/tutorials/introduction/) that make this course possible.
+## Configuration
 
-## 🌟 Support
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `GOOGLE_PROJECT_NAME` | Yes | Google Cloud project ID used by Vertex AI |
+| `PROJECT_ROOT` | No | Repository root used to derive the `data` directory; defaults to this project directory |
 
-If you find this project helpful, please consider:
-- ⭐ Starring the repository
-- 🐛 Reporting issues
-- 💡 Contributing improvements
-- 📢 Sharing with others
+Authentication uses Google Cloud Application Default Credentials (ADC). This Vertex AI setup does **not** use `GOOGLE_API_KEY`; do not put credentials or API keys in source control. The local `.env` file is ignored by Git.
 
----
+## Project Files
 
-<div align="center">
+| Path | Description |
+| --- | --- |
+| `main.py` | Gemini model setup, the sample tool, and the interactive agent invocation |
+| `config.py` | Loads environment variables and defines project/data paths |
+| `data/about-elon.txt` | Sample text file; not yet consumed by the agent |
+| `pyproject.toml` / `uv.lock` | Project metadata, dependencies, and locked dependency versions |
+| `.env.example` | Safe configuration template to copy to `.env` |
 
-### 🔗 Connect with Me
+## Troubleshooting
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://www.udemy.com/course/langchain/?referralCode=D981B8213164A3EA91AC)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/eden-marco/)
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/EdenEmarco177)
+- **`GOOGLE_PROJECT_NAME` not found:** copy `.env.example` to `.env` and set the project ID.
+- **ADC credentials not found:** run `gcloud auth application-default login`.
+- **`BILLING_DISABLED` / billing required:** enable billing on the selected Google Cloud project, then retry after the change propagates.
+- **Vertex AI permission or API errors:** verify that the Vertex AI API is enabled, the project ID is correct, and your Google account has the required IAM role.
 
-**Built with ❤️ by Eden Marco**
+## Development Status
 
-</div>
+This is a learning/demo project. The Gemini/Vertex AI call is implemented; the search tool is only a placeholder, and the sample data file is not yet connected to the agent. No automated test suite is currently included.
 
