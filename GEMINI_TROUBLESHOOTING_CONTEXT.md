@@ -137,10 +137,27 @@ For the current Vertex AI path:
 
 - `GOOGLE_PROJECT_NAME` is loaded from `.env` and passed to the model client as `project`.
 - `GOOGLE_API_KEY` is not read by the current app and should not be assumed to authenticate this Vertex AI request.
-- The local ADC identity comes from Google Cloud CLI authentication or another ADC configuration, and must have access to the selected project.
+- The app requires credentials discoverable by Google Application Default Credentials (ADC); installing the Google Cloud CLI is not a universal runtime requirement.
+- For local user-account development, Google's documented route is `gcloud auth application-default login`. ADC can also use supported external-account credential configuration via `GOOGLE_APPLICATION_CREDENTIALS`, direct credentials, or an attached service account in a supported Google Cloud runtime.
+- The local ADC identity must have access to the selected project.
 - The project needs Vertex AI enabled, billing enabled, and appropriate IAM access. Do not assume enabling the API alone enables billing.
 
 The repository has `.env.example` with placeholders for `GOOGLE_PROJECT_NAME` and optional `PROJECT_ROOT`. `.env` is Git-ignored and is not tracked. The local `.env` also contains optional variables for other tools/integrations, but those are not required or read by this app's current configuration. Never commit `.env`, keys, ADC credential files, or service-account JSON.
+
+### Authentication Research (Checked 2026-10-11)
+
+The current code explicitly sets `vertexai=True`, so it uses the Google Cloud Vertex AI backend. The official LangChain integration documentation says ADC is supported for this backend and demonstrates `gcloud auth application-default login`; it also documents supplying service-account credentials directly. The Google ADC documentation lists credentials from `GOOGLE_APPLICATION_CREDENTIALS`, a local ADC file created with `gcloud auth application-default login`, and an attached service account as ADC lookup sources. Therefore, `gcloud` is the normal/recommended local user-credential setup in these docs, but it is not mandatory for all ways of running this application.
+
+For deployed workloads on Google Cloud, an attached service account is the preferred credential source. For external environments, Google recommends Workload Identity Federation over long-lived service-account keys. Service-account keys are sensitive and should be avoided when possible.
+
+The Gemini Developer API is a different backend. LangChain supports API-key authentication for it, but this app's current `vertexai=True` setting selects Vertex AI; adding `GOOGLE_API_KEY` alone will not change the backend. The Developer API has its own quota and billing rules.
+
+Official references:
+
+- [Google: Set up ADC](https://docs.cloud.google.com/docs/authentication/provide-credentials-adc)
+- [Google: ADC for local development](https://docs.cloud.google.com/docs/authentication/set-up-adc-local-dev-environment)
+- [Google: How ADC finds credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials)
+- [LangChain: `ChatGoogleGenerativeAI` authentication and backend selection](https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai)
 
 ## Questions to Resolve
 

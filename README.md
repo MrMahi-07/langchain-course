@@ -19,7 +19,7 @@ The `web_search` tool is currently a stub: it prints the query and always return
 - Python 3.14 or newer
 - [uv](https://docs.astral.sh/uv/)
 - A Google Cloud project with billing enabled and the Vertex AI API enabled
-- Google Cloud CLI (`gcloud`) for local Application Default Credentials
+- Google Cloud credentials authorized for Vertex AI; `gcloud` is the recommended local setup, but it is not the only way to provide credentials
 
 ## Local Setup
 
@@ -50,15 +50,14 @@ The `web_search` tool is currently a stub: it prints the query and always return
    uv sync
    ```
 
-4. Configure Google Cloud access. In a terminal where `gcloud` is installed, sign in and select the project:
+4. Configure Google Cloud access. The simplest local developer setup is to install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) and create Application Default Credentials (ADC):
 
    ```powershell
    gcloud auth application-default login
-   gcloud config set project YOUR_GOOGLE_CLOUD_PROJECT_ID
    gcloud services enable aiplatform.googleapis.com --project=YOUR_GOOGLE_CLOUD_PROJECT_ID
    ```
 
-   Ensure billing is enabled for the project and your account has permission to use Vertex AI (for example, the Vertex AI User role). The Google Cloud project ID in `.env` must be the project you have configured access to.
+   The `gcloud config set project ...` command is optional for this app because it passes `GOOGLE_PROJECT_NAME` directly to the model. It changes the CLI's default project, not the ADC identity used by the app. Ensure the project has billing enabled and the signed-in identity has permission to use Vertex AI (for example, the Vertex AI User role).
 
 5. Start the agent:
 
@@ -76,6 +75,14 @@ The `web_search` tool is currently a stub: it prints the query and always return
 | `PROJECT_ROOT` | No | Repository root used to derive the `data` directory; defaults to this project directory |
 
 Authentication uses Google Cloud Application Default Credentials (ADC). This Vertex AI setup does **not** use `GOOGLE_API_KEY`; do not put credentials or API keys in source control. The local `.env` file is ignored by Git.
+
+### Do I Need `gcloud`?
+
+No, not in every environment. It is the recommended straightforward method for a developer using their own Google account on a local computer: `gcloud auth application-default login` creates local ADC credentials. ADC is the authentication mechanism the application needs; `gcloud` is one way to supply those credentials.
+
+Other supported ADC options include a `GOOGLE_APPLICATION_CREDENTIALS` file containing an external-account (Workload/Workforce Identity Federation) configuration, service-account impersonation credentials, or an attached service account when running on Google Cloud. Avoid service-account key files unless there is no safer option; never commit credential files. See Google's [ADC overview](https://docs.cloud.google.com/docs/authentication/provide-credentials-adc), [local ADC setup](https://docs.cloud.google.com/docs/authentication/set-up-adc-local-dev-environment), and [ADC credential lookup order](https://docs.cloud.google.com/docs/authentication/application-default-credentials).
+
+The Gemini Developer API is a separate backend and can use a Gemini API key without `gcloud`. Switching to that backend requires changing the current Vertex AI configuration; setting `GOOGLE_API_KEY` alone does not override `vertexai=True`. Its quota and billing terms are separate, so check the current [Gemini API documentation](https://ai.google.dev/gemini-api/docs) before choosing it.
 
 ## Project Files
 
